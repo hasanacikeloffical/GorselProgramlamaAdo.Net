@@ -13,25 +13,32 @@ namespace WindowsFormsApp1
     {
     public partial class Form1 :Form
         {
+
         public Form1()
             {
+            
             InitializeComponent();
+            }
+
+        
+
+        private void listBox1_SelectedIndexChanged(object sender,EventArgs e)
+            {
+            SqlConnection connection = new SqlConnection();
+            connection.ConnectionString = "Data Source=DESKTOP-KM10E7C;Initial Catalog=MusteriSiparis;Integrated Security=True";
+            connection.Open();
+            var data = new SqlDataAdapter("Select * From Musteri",connection);
+            DataTable dataTable = new DataTable();
+            data.Fill(dataTable);
+            listBox1.DisplayMember = "MusteriAd";
+            listBox1.ValueMember = "MusteriId";
+            listBox1.DataSource = dataTable;
+
             }
 
         private void button1_Click(object sender,EventArgs e)
             {
-            SqlConnection connection = new SqlConnection();
-            connection.ConnectionString = "Data Source=DESKTOP-KM10E7C;Initial Catalog=GorselProgramlama;Integrated Security=True";
-            connection.Open();
-            MessageBox.Show("Baðlantý Açýldý");
-
-            SqlDataAdapter data = new SqlDataAdapter();
-            data.SelectCommand.CommandText = "Select * From Musteri";
-            data.SelectCommand.Connection = connection;
-
-            DataTable dt = new DataTable();
-            data.Fill(dt);
-            MessageBox.Show("Veriler Getirildi");
+               MessageBox.Show("Seçilen Müþteri Id: " + listBox1.SelectedValue.ToString());
             }
         }
     }
