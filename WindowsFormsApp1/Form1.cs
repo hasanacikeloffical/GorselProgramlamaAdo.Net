@@ -36,6 +36,14 @@ namespace WindowsFormsApp1
             // dtset içerisinde datatable tanýmlamak zorundayýz çünkü dset içerisinde birden fazla datatable olabilir. dset içerisinde barýnmaktadýr.
 
             dataGridView1.DataSource = dataTable;
+
+            MessageBox.Show(dataTable.Columns.Count.ToString());
+            
+            //foreach(DataColumn column in dataTable.Columns)
+            //    {
+                 
+            //    }
             }
+        
         }
     }
