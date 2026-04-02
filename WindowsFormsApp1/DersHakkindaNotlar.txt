@@ -1,0 +1,1 @@
+Server Explorer ile database bağlantısı da yapabiliriz.

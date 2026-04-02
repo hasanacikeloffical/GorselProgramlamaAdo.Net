@@ -20,25 +20,22 @@ namespace WindowsFormsApp1
             InitializeComponent();
             }
 
-        
-
-        private void listBox1_SelectedIndexChanged(object sender,EventArgs e)
-            {
-            SqlConnection connection = new SqlConnection();
-            connection.ConnectionString = "Data Source=DESKTOP-KM10E7C;Initial Catalog=MusteriSiparis;Integrated Security=True";
-            connection.Open();
-            var data = new SqlDataAdapter("Select * From Musteri",connection);
-            DataTable dataTable = new DataTable();
-            data.Fill(dataTable);
-            listBox1.DisplayMember = "MusteriAd";
-            listBox1.ValueMember = "MusteriId";
-            listBox1.DataSource = dataTable;
-
-            }
-
         private void button1_Click(object sender,EventArgs e)
             {
-               MessageBox.Show("Seçilen Müþteri Id: " + listBox1.SelectedValue.ToString());
+            // db baðlantýsý
+            SqlConnection connection = new SqlConnection();
+            connection.ConnectionString = @"Data Source=DESKTOP-KM10E7C;Initial Catalog=MusteriSiparis;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
+            connection.Open();
+            MessageBox.Show("Baðlantý Baþarýlý");
+
+            // burada veri çekme iþlemleri için kullanýlýr.
+            SqlDataAdapter dataAdapter = new SqlDataAdapter("SELECT * FROM Musteri", connection);
+            DataTable dataTable = new DataTable();
+            dataAdapter.Fill(dataTable);
+            MessageBox.Show("veri çekme iþlemi baþarýlý");
+            // dtset içerisinde datatable tanýmlamak zorundayýz çünkü dset içerisinde birden fazla datatable olabilir. dset içerisinde barýnmaktadýr.
+
+            dataGridView1.DataSource = dataTable;
             }
         }
     }
