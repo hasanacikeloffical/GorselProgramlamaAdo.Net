@@ -64,8 +64,30 @@ namespace WindowsFormsApp1
 
         private void sehirler_SelectedIndexChanged(object sender,EventArgs e)
             {
+                Filters();
+            }
+
+        
+
+        private void textBox1_TextChanged(object sender,EventArgs e)
+            {
+               Filters();
+            }
+
+
+        private void Filters()
+            {
             // listeleme iþlemi yapýldý.
             string sql = $"select * from Musteri where sehir = @sehir_";
+            if(textBox1.Text.Trim().Length > 0)
+            {
+                sql += $" and (Ad like '%{textBox1.Text.Trim()}%' or Soyad like '%{textBox1.Text.Trim()}%')";
+            }
+
+            if(textBox2.Text.Trim().Length > 0) 
+                {
+                sql += $" and Telefon like '%{textBox2.Text.Trim()}%'"; 
+                }
             SqlCommand _sqlcommand = new SqlCommand(sql,SqlConnection);
             _sqlcommand.Parameters.AddWithValue("sehir_",sehirler.Text);
 
@@ -76,6 +98,24 @@ namespace WindowsFormsApp1
             dataGridView1.DataSource = _dataTable;
 
 
+            }
+
+        private void textBox2_TextChanged(object sender,EventArgs e)
+            {
+             Filters();
+            }
+
+         private void dataGridView1_SelectionChanged(object sender,EventArgs e)
+            {
+            string sql = $"Select * from Siparis where Musteri_Id = @musteriId";
+            SqlCommand _sqlCommand = new SqlCommand(sql,SqlConnection);
+            int MusteriNo = Convert.ToInt16(dataGridView1.CurrentRow.Cells["Id"].Value); // datagridview üzerinden seçilen satýrýn id'sini alarak sipariþleri listeleme iþlemi yapýldý.
+            _sqlCommand.Parameters.AddWithValue("musteriId",MusteriNo);
+
+            SqlDataAdapter _sqlDataAdapter = new SqlDataAdapter(_sqlCommand);
+            DataTable _dataTable = new DataTable();
+            _sqlDataAdapter.Fill(_dataTable);
+            dataGridView2.DataSource = _dataTable;
             }
         }
     }
