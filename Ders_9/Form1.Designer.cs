@@ -48,7 +48,7 @@ namespace Ders_9
             this.UrunFiyati = new System.Windows.Forms.TextBox();
             this.UrunTransferMiktar = new System.Windows.Forms.TextBox();
             this.Sil = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
+            this.UrunStokTranfer = new System.Windows.Forms.Button();
             this.Güncelle = new System.Windows.Forms.Button();
             this.Ekle = new System.Windows.Forms.Button();
             this.Listeleme = new System.Windows.Forms.Button();
@@ -223,26 +223,29 @@ namespace Ders_9
             // Sil
             // 
             this.Sil.BackColor = System.Drawing.Color.Red;
-            this.Sil.Location = new System.Drawing.Point(1043, 12);
+            this.Sil.Location = new System.Drawing.Point(946, 12);
             this.Sil.Name = "Sil";
             this.Sil.Size = new System.Drawing.Size(80, 30);
             this.Sil.TabIndex = 6;
             this.Sil.Text = "Sil";
             this.Sil.UseVisualStyleBackColor = false;
+            this.Sil.Click += new System.EventHandler(this.Sil_Click);
             // 
-            // button8
+            // UrunStokTranfer
             // 
-            this.button8.Location = new System.Drawing.Point(1176, 12);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(80, 30);
-            this.button8.TabIndex = 7;
-            this.button8.Text = "button8";
-            this.button8.UseVisualStyleBackColor = true;
+            this.UrunStokTranfer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.UrunStokTranfer.Location = new System.Drawing.Point(1045, 12);
+            this.UrunStokTranfer.Name = "UrunStokTranfer";
+            this.UrunStokTranfer.Size = new System.Drawing.Size(80, 30);
+            this.UrunStokTranfer.TabIndex = 7;
+            this.UrunStokTranfer.Text = "Stok Transfer";
+            this.UrunStokTranfer.UseVisualStyleBackColor = false;
+            this.UrunStokTranfer.Click += new System.EventHandler(this.UrunStokTranfer_Click);
             // 
             // Güncelle
             // 
             this.Güncelle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.Güncelle.Location = new System.Drawing.Point(905, 12);
+            this.Güncelle.Location = new System.Drawing.Point(847, 12);
             this.Güncelle.Name = "Güncelle";
             this.Güncelle.Size = new System.Drawing.Size(80, 30);
             this.Güncelle.TabIndex = 8;
@@ -253,7 +256,7 @@ namespace Ders_9
             // Ekle
             // 
             this.Ekle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
-            this.Ekle.Location = new System.Drawing.Point(773, 12);
+            this.Ekle.Location = new System.Drawing.Point(751, 12);
             this.Ekle.Name = "Ekle";
             this.Ekle.Size = new System.Drawing.Size(80, 30);
             this.Ekle.TabIndex = 9;
@@ -343,7 +346,7 @@ namespace Ders_9
             this.Controls.Add(this.Listeleme);
             this.Controls.Add(this.Ekle);
             this.Controls.Add(this.Güncelle);
-            this.Controls.Add(this.button8);
+            this.Controls.Add(this.UrunStokTranfer);
             this.Controls.Add(this.Sil);
             this.Controls.Add(this.UrunTransferMiktar);
             this.Controls.Add(this.UrunFiyati);
@@ -381,7 +384,7 @@ namespace Ders_9
         private System.Windows.Forms.TextBox UrunFiyati;
         private System.Windows.Forms.TextBox UrunTransferMiktar;
         private System.Windows.Forms.Button Sil;
-        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button UrunStokTranfer;
         private System.Windows.Forms.Button Güncelle;
         private System.Windows.Forms.Button Ekle;
         private System.Windows.Forms.Button Listeleme;

@@ -67,6 +67,80 @@ namespace Ders_9
                     }
             }
         
+        private void UrunSil(int id)
+            {
+            string query = "delete from Urunler where urunId=@Urunid";
+            using(SqlConnection conn = new SqlConnection(ConnectionString))
+            using(SqlCommand cmd = new SqlCommand(query,conn))
+                {
+                cmd.Parameters.AddWithValue("@Urunid",id);
+                conn.Open();
+                int KayitSayisi = cmd.ExecuteNonQuery(); // ExecuteNonQuery() methodu, SQL sorgusunu çalýþtýrýr ve etkilenen satýr sayýsýný döndürür. This method is typically used for INSERT, UPDATE, or DELETE queries.
+                UrunlerListele();
+                }
+            }
+
+        private void StokTransfer(int KaynakUrunId,int HedefUrunId,int Miktar)
+            {
+            using(SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+                conn.Open();
+                SqlTransaction trans = conn.BeginTransaction(); // BeginTransaction() methodu, bir SQL baðlantýsý üzerinde yeni bir iþlem baþlatýr. Bu method, iþlemi yönetmek ve gerektiðinde geri almak (rollback) veya onaylamak (commit) için kullanýlýr.   
+                try
+                    {
+                    string sqlKaynak = "Update Urunler Set Stok = Stok - @Miktar where UrunId = @id";
+                    using(SqlCommand cmd = new SqlCommand(sqlKaynak,conn,trans))
+                        {
+                        cmd.Parameters.AddWithValue("@Miktar",Miktar);
+                        cmd.Parameters.AddWithValue("@id",KaynakUrunId);
+                        cmd.ExecuteNonQuery();
+
+                        }
+
+                    string SqlHareketKaynak = "Insert into StokHareketleri (UrunId,Miktar,Tarih,Tip) values (@id,@Miktar, Getdate(), 'Çýkýþ')";
+                    using(SqlCommand cmd = new SqlCommand(SqlHareketKaynak,conn,trans))
+                        {
+                        cmd.Parameters.AddWithValue("@Miktar",Miktar);
+                        cmd.Parameters.AddWithValue("@id",KaynakUrunId);
+                        cmd.ExecuteNonQuery();
+
+                        }
+                    string sqlHedef = "Update Urunler Set Stok = Stok + @Miktar where UrunId = @id";
+                    using(SqlCommand cmd = new SqlCommand(sqlHedef,conn,trans))
+                        {
+                        cmd.Parameters.AddWithValue("@Miktar",Miktar);
+                        cmd.Parameters.AddWithValue("@id",HedefUrunId);
+                        cmd.ExecuteNonQuery();
+
+                        }
+
+                    string SqlHareketHedef = "Insert into StokHareketleri (UrunId,Miktar,Tarih,Tip) values (@id,@Miktar, Getdate(), 'Giriþ')";
+                    using(SqlCommand cmd = new SqlCommand(SqlHareketHedef,conn,trans))
+                        {
+                        cmd.Parameters.AddWithValue("@Miktar",Miktar);
+                        cmd.Parameters.AddWithValue("@id",HedefUrunId);
+                        cmd.ExecuteNonQuery();
+
+                        }
+                    trans.Commit(); // Commit() methodu, bir SQL iþlemini onaylar ve yapýlan deðiþiklikleri veritabanýna kalýcý olarak kaydeder. 
+                    UrunlerListele();
+                    }
+                catch
+                    {
+                    trans.Rollback(); // Rollback() methodu, bir SQL iþlemini geri alýr. Bu method, bir iþlem sýrasýnda bir hata oluþtuðunda veya iþlemi tamamlamak istemediðinizde kullanýlýr. Rollback() methodu, iþlemi baþlatan BeginTransaction() methodu ile birlikte kullanýlýr.
+                    }
+                }
+            }
+
+        private void FiyatGuncelleSP(int UrunId, decimal yeniFiyat)
+            {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+                using (SqlCommand cmd = new SqlCommand("sp_UrunFiyatGuncelle",conn))
+                {
+                 
+                }
+            }
+
         private void Listeleme_Click(object sender,EventArgs e)
             {
             UrunlerListele();
@@ -84,6 +158,24 @@ namespace Ders_9
             int id = (int)ListelemeSayfasý.SelectedRows[0].Cells["UrunId"].Value;
             UrunGüncelle(id, UrunAdý.Text, decimal.Parse(UrunFiyati.Text), int.Parse(UrunStok.Text));
 
+            }
+
+        private void Sil_Click(object sender,EventArgs e)
+            {
+
+            if(ListelemeSayfasý.SelectedRows.Count == 0) return;
+            int id = (int)ListelemeSayfasý.SelectedRows[0].Cells["UrunId"].Value;
+            UrunSil(id);
+
+            }
+
+        private void UrunStokTranfer_Click(object sender,EventArgs e)
+            {
+              if(ListelemeSayfasý.SelectedRows.Count == 0) return;
+            int id = (int)ListelemeSayfasý.SelectedRows[0].Cells["UrunId"].Value;
+            int hedef = int.Parse(UrunTransferId.Text);
+            int miktar = int.Parse(UrunTransferMiktar.Text);
+            StokTransfer(id, hedef, miktar  );
             }
         }
     }
