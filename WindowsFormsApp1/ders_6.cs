@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -23,20 +24,21 @@ namespace WindowsFormsApp1
 
         private void button1_Click(object sender,EventArgs e)
             {
-            string sorgu = @" select
-                           m.Id,
-                           m.Ad + '  ' + m.Soyad AdSoyad,
-                           m.Ulke,
-                           max(s.SiparisTarih) SiparisTarih,
-                           avg(s.ToplamTutar) OrtalamaTutar
-                           from
-                           Musteri m
-                           join Siparis s on s.Musteri_Id = m.Id
-                           group by
-                           m.Id,
-                           m.Ad,
-                           m.Soyad,
-                           m.Ulke";
+                string sorgu = @" select
+                               m.Id,
+                               m.Ad + '  ' + m.Soyad AdSoyad,
+                               m.Ulke,
+                               max(s.SiparisTarih) SiparisTarih,
+                               avg(s.ToplamTutar) OrtalamaTutar,
+                               count (*) SiparisAdet
+                               from
+                               Musteri m
+                               join Siparis s on s.Musteri_Id = m.Id
+                               group by
+                               m.Id,
+                               m.Ad,
+                               m.Soyad,
+                               m.Ulke";
 
             // burada veri kaynaðý ile denetim arasýnda köprü görevi gören bir kodtur.
             // desing ve yönlendirme iþlemlerinde bana yardýmcý olacaktýr. 
@@ -50,6 +52,7 @@ namespace WindowsFormsApp1
             
             dataGridView1.Columns.Clear(); // DataGridView'in mevcut sütunlarýný temizledik.
 
+            #region Id Sütunu Oluþturma
             DataGridViewTextBoxColumn textBoxColumnID = new DataGridViewTextBoxColumn();
             textBoxColumnID.Name = "MusteriId"; // Kimlik bilgisi için bir isim verdik.
             textBoxColumnID.HeaderText = "Id";  // Baþlýk bilgisi için bir isim verdik.
@@ -57,7 +60,8 @@ namespace WindowsFormsApp1
             textBoxColumnID.Width = 50; // Sütun geniþliðini belirledik.
             textBoxColumnID.ReadOnly = true; // Sütunu salt okunur yaparak düzenlenmesini engelledik.
             dataGridView1.Columns.Add(textBoxColumnID); // DataGridView'e yeni bir sütun ekledik.
-
+            #endregion
+            #region Ad Soyad Sütunu Oluþturma
             DataGridViewTextBoxColumn textBoxColumnName = new DataGridViewTextBoxColumn();
             textBoxColumnName.Name = "MusteriAdSoyad"; // Kimlik bilgisi için bir isim verdik.
             textBoxColumnName.HeaderText = "Ad Soyad";  // Baþlýk bilgisi için bir isim verdik.
@@ -65,7 +69,8 @@ namespace WindowsFormsApp1
             textBoxColumnName.Width = 150; // Sütun geniþliðini belirledik.
             textBoxColumnName.ReadOnly = true; // Sütunu salt okunur yaparak düzenlenmesini engelledik.
             dataGridView1.Columns.Add(textBoxColumnName); // DataGridView'e yeni bir sütun ekledik.
-
+            #endregion
+            #region Müþteri Ülkeleri Sütunu Oluþturma
             DataGridViewComboBoxColumn dataGridViewComboBoxColumnUlke = new DataGridViewComboBoxColumn();
             dataGridViewComboBoxColumnUlke.Name = "MusteriUlke"; // Kimlik bilgisi için bir isim verdik.
             dataGridViewComboBoxColumnUlke.HeaderText = "Müþteri Ülkeleri";  // Baþlýk bilgisi için bir isim verdik.
@@ -93,7 +98,8 @@ namespace WindowsFormsApp1
                                                            "USA",
                                                            "Venezuela");
             dataGridView1.Columns.Add(dataGridViewComboBoxColumnUlke); // DataGridView'e yeni bir sütun ekledik.
-
+            #endregion
+            #region tarih Sütunu Oluþturma
             DataGridViewTextBoxColumn dataGridViewTextBoxColumnTarih = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumnTarih.Name = "SiparisTarih"; // Kimlik bilgisi için bir isim verdik.
             dataGridViewTextBoxColumnTarih.HeaderText = "Sipariþ Tarihi";  // Baþlýk bilgisi için bir isim verdik.
@@ -103,8 +109,8 @@ namespace WindowsFormsApp1
             dataGridViewTextBoxColumnTarih.DefaultCellStyle.Format = "dd/MM/yyyy"; // Hücrelerdeki tarih formatýný gün/ay/yýl olarak belirledik.
             dataGridViewTextBoxColumnTarih.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; // Hücrelerdeki metni ortalayarak hizaladýk.
             dataGridView1.Columns.Add(dataGridViewTextBoxColumnTarih); // DataGridView'e yeni bir sütun ekledik.
-
-
+            #endregion
+            #region Tutar Sütunu Oluþturma
             DataGridViewTextBoxColumn dataGridViewTextBoxColumnTutar = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumnTutar.Name = "OrtalamaTutar"; // Kimlik bilgisi için bir isim verdik.
             dataGridViewTextBoxColumnTutar.HeaderText = "Ortalama Tutar";  // Baþlýk bilgisi için bir isim verdik.
@@ -113,7 +119,18 @@ namespace WindowsFormsApp1
             dataGridViewTextBoxColumnTutar.DefaultCellStyle.BackColor = Color.LightCyan; // Hücrelerin arka plan rengini açýk camgöbeði olarak belirledik.
             dataGridViewTextBoxColumnTutar.DefaultCellStyle.Format = "C2"; // iki ondalýk basamaklý para birimi formatýný belirledik.
             dataGridView1.Columns.Add(dataGridViewTextBoxColumnTutar); // DataGridView'e yeni bir sütun ekledik.
-
+            #endregion
+            #region Sipariþ Sütunu Oluþturma
+            DataGridViewTextBoxColumn dataGridViewTextBoxColumnOrderCount = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumnOrderCount.Name = "Adet"; // Kimlik bilgisi için bir isim verdik.
+            dataGridViewTextBoxColumnOrderCount.HeaderText = "Sipariþ Adeti";  // Baþlýk bilgisi için bir isim verdik.
+            dataGridViewTextBoxColumnOrderCount.DataPropertyName = "SiparisAdet";  // Veri kaynaðýndaki hangi sütunla eþleþtirileceðini belirttik.
+            dataGridViewTextBoxColumnOrderCount.Width = 40; // Sütun geniþliðini belirledik.
+            dataGridViewTextBoxColumnOrderCount.DefaultCellStyle.BackColor = Color.LightGray; // Hücrelerin arka plan rengini açýk camgöbeði olarak belirledik.
+            dataGridView1.Columns.Add(dataGridViewTextBoxColumnOrderCount); // DataGridView'e yeni bir sütun ekledik.
+           
+            #endregion
+            #region Sil Butonu Sütunu Oluþturma
             DataGridViewButtonColumn dataGridViewButtonColumnButton = new DataGridViewButtonColumn();
             dataGridViewButtonColumnButton.Name = "Sil";  // Kimlik bilgisi için bir isim verdik.
             dataGridViewButtonColumnButton.HeaderText = "Ýþlem";  // Baþlýk bilgisi için bir isim verdik.
@@ -123,9 +140,51 @@ namespace WindowsFormsApp1
             dataGridView1.Columns.Add(dataGridViewButtonColumnButton); // DataGridView'e yeni bir sütun ekledik.
 
             dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.LightGray; // çift  satýrlarý arka plan rengini açýk gri olarak belirledik.
+
+            #endregion
+            
             
             
             }
+        #region
+        private void dataGridView1_CellFormatting(object sender,DataGridViewCellFormattingEventArgs e)
+            {
+            if(dataGridView1.Columns[e.ColumnIndex].Name == "OrtalamaTutar")
+                {
+                  if(e.Value != null && decimal.TryParse(e.Value.ToString(), out decimal OrtalamaTutar))
+                    {
+                      if(OrtalamaTutar > 100)
+                        {
+                        e.CellStyle.BackColor = Color.LightGreen;
+                        }
+                    else if (OrtalamaTutar < 300)
+                        {
+                         e.CellStyle.BackColor = Color.LightCoral;
+                        }
+                    }
+                }
+           if(dataGridView1.Columns[e.ColumnIndex].Name == "Adet")
+                {
+                 if (e.Value != null && int.TryParse(e.Value.ToString(), out int adet))
+                    {
+                    
+                    if (adet < 10)
+                        {
+                        e.CellStyle.ForeColor = Color.Red;
+                        e.CellStyle.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+                        }
+                    }
+                }
+            }
+        #endregion
+
+        private void dataGridView1_CurrentCellDirtyStateChanged(object sender,EventArgs e)
+            {
+            if(dataGridView1.IsCurrentCellDirty)
+                {
+                dataGridView1.CommitEdit(DataGridViewDataErrorContexts.Commit); // commit yapabiliriz.
+                }
+            }
         }
-    
+
     }

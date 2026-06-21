@@ -58,6 +58,12 @@
     <Compile Include="ders_6.Designer.cs">
       <DependentUpon>ders_6.cs</DependentUpon>
     </Compile>
+    <Compile Include="Ders_7.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Ders_7.Designer.cs">
+      <DependentUpon>Ders_7.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
